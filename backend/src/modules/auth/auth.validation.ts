@@ -1,20 +1,18 @@
-import * as yup from "yup";
+import { z } from "zod";
 
-const registerValidationSchema = yup.object({
-  body: yup.object({
-    name: yup
+const registerValidationSchema = z.object({
+  body: z.object({
+    name: z
       .string()
-      .required("Name is required"),
+      .min(1, "Name is required"),
 
-    email: yup
+    email: z
       .string()
-      .email("Invalid email address")
-      .required("Email is required"),
+      .email("Invalid email address"),
 
-    password: yup
+    password: z
       .string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
+      .min(6, "Password must be at least 6 characters"),
   }),
 });
 

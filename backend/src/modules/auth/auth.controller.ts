@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
-import { AuthServices } from "./auth.service";
-import catchAsync from "../../utils/catchAsync";
+
+import asyncHandler from "../../utils/asyncHandler";
 import sendResponse from "../../utils/sendResponse";
 
-const registerUser = catchAsync(async (req: Request, res: Response) => {
+import { AuthServices } from "./auth.service";
+
+const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const result = await AuthServices.registerUserIntoDB(req.body);
 
   sendResponse(res, {

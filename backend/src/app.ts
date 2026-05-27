@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser'
 import notFound from "./middlewares/notFound";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 
+import router from "./routes";
+
 const app = express();
 
 app.use(express.json());
@@ -18,9 +20,12 @@ app.get('/',(_req,res)=>{
     })
 });
 
-// Not Found Middleware
+app.use("/api/v1", router);
+
 app.use(notFound);
 
-// Global Error Handler
+
 app.use(globalErrorHandler);
+
+
 export default app;
