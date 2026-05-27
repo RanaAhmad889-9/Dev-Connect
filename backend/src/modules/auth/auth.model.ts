@@ -1,7 +1,8 @@
+import bcrypt from "bcrypt";
 import { Schema, model } from "mongoose";
-import { IUser } from "./auth.interface";
+import { IUser, UserModel } from "./auth.interface";
 
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema<IUser, UserModel>(
   {
     name: {
       type: String,
@@ -55,4 +56,28 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-export const User = model<IUser>("User", userSchema);
+
+userSchema.pre("save", async function () {
+  const user = this;
+
+  if (!user.isModified("password")) {
+    return;
+  }
+
+  user.password = await bcrypt.hash(user.password, 10);
+});
+
+
+userSchema.statics.isUserExistsByEmail = async function (email: string) {
+  return await this.findOne({ email }).select("+password");
+};
+
+
+userSchema.methods.isPasswordMatched = async function (
+  plainTextPassword: string,
+  hashedPassword: string
+) {
+  return await bcrypt.compare(plainTextPassword, hashedPassword);
+};
+
+export const User = model<IUser, UserModel>("User", userSchema);

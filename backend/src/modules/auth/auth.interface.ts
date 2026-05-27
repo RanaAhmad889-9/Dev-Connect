@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document,Model } from "mongoose";
 
 export type UserRole = "user" | "admin";
 
@@ -14,4 +14,12 @@ export interface IUser extends Document {
 
   createdAt?: Date;
   updatedAt?: Date;
+
+  isPasswordMatched(
+    plainTextPassword: string,
+    hashedPassword:string):Promise<boolean>;
+}
+
+export interface UserModel extends Model<IUser> {
+  isUserExistsByEmail(email: string):Promise<IUser | null>;
 }
