@@ -16,8 +16,7 @@ export interface IUser extends Document {
   updatedAt?: Date;
 
   isPasswordMatched(
-    plainTextPassword: string,
-    hashedPassword:string):Promise<boolean>;
+    plainTextPassword: string):Promise<boolean>;
 }
 
 export interface UserModel extends Model<IUser> {

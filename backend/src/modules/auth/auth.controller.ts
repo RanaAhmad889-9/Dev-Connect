@@ -16,6 +16,18 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const loginUser=asyncHandler(async (req:Request, res:Response)=>{
+  const result=await AuthServices.loginUser(req.body);
+
+  sendResponse(res,{
+    success:true,
+    statusCode:200,
+    message:"Login Successful",
+    data:result
+  })
+})
+
 export const AuthControllers = {
   registerUser,
+  loginUser,
 };
