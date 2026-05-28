@@ -27,7 +27,19 @@ const loginUser=asyncHandler(async (req:Request, res:Response)=>{
   })
 })
 
+const getMe = asyncHandler(async (req: Request, res: Response) => {
+  const result = await AuthServices.getMe(req.user.userId);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: "User retrieved successfully",
+    data: result,
+  });
+});
+
 export const AuthControllers = {
   registerUser,
   loginUser,
+    getMe,
 };

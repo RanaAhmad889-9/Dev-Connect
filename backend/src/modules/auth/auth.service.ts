@@ -31,11 +31,22 @@ const registerUserIntoDB = async (payload: TRegisterUser) => {
   return result;
 };
 
+const getMe = async (userId: string) => {
+  const result = await User.findById(userId).select("-password");
+   
+  if (!result) {
+    throw new AppError(404, "User not found");
+  }
+
+
+  return result;
+};
+
 const loginUser=async (payload:TLoginUser)=>{
   const user = await User.isUserExistsByEmail(payload.email);
   
   if(!user){
-    throw new AppError(404, "User not found");
+    throw new AppError(401, "Invalid credentials");
   }
 
   if (user.isBlocked) {
@@ -49,7 +60,7 @@ const loginUser=async (payload:TLoginUser)=>{
   }
 
   const jwtPayload={
-    userId:user._id,
+    userId:user._id.toString(),
     email:user.email,
     role:user.role,
   };
@@ -60,7 +71,7 @@ const accessToken=generateToken(jwtPayload,
 );
 
 return {
-    token: accessToken,
+    accessToken,
   };
 
 
@@ -69,4 +80,5 @@ return {
 export const AuthServices = {
   registerUserIntoDB,
   loginUser,
+  getMe
 };
