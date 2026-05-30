@@ -32,10 +32,12 @@ const getAllPosts = asyncHandler(async (_req: Request, res: Response) => {
 
 const getSinglePost = asyncHandler(
   async (req: Request, res: Response) => {
-
     const postId = req.params.id as string;
+
     const result = await PostServices.getSinglePostFromDB(
-        postId
+      postId,
+      req.user?.userId,
+      req.user?.role
     );
 
     sendResponse(res, {
@@ -47,8 +49,52 @@ const getSinglePost = asyncHandler(
   }
 );
 
+
+const updatePost = asyncHandler(
+  async (req: Request, res: Response) => {
+    const postId = req.params.id as string;
+
+    const result = await PostServices.updatePostIntoDB(
+      postId,
+      req.body,
+      req.user.userId,
+      req.user.role
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Post updated successfully",
+      data: result,
+    });
+  }
+);
+
+const deletePost = asyncHandler(
+  async (req: Request, res: Response) => {
+    const postId = req.params.id as string;
+
+    const result = await PostServices.deletePostFromDB(
+      postId,
+      req.user.userId,
+      req.user.role
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: 200,
+      message: "Post deleted successfully",
+      data: result,
+    });
+  }
+);
+
+
+
 export const PostControllers = {
   createPost,
   getAllPosts,
   getSinglePost,
+  updatePost,
+  deletePost,
 };

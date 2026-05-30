@@ -8,6 +8,25 @@ const createPostValidationSchema = z.object({
 
     image: z
       .string()
+      .url("Image must be a valid URL")
+      .optional(),
+
+    visibility: z
+      .enum(["public", "private"])
+      .optional(),
+  }),
+});
+
+const updatePostValidationSchema = z.object({
+  body: z.object({
+    content: z
+      .string()
+      .min(1, "Content is required")
+      .optional(),
+
+    image: z
+      .string()
+      .url("Image must be a valid URL")
       .optional(),
 
     visibility: z
@@ -18,4 +37,5 @@ const createPostValidationSchema = z.object({
 
 export const PostValidation = {
   createPostValidationSchema,
+  updatePostValidationSchema,
 };

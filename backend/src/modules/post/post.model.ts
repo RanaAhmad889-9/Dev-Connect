@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { IPost } from "./Post.interface";
+import { IPost } from "./post.interface";
 
 const postSchema = new Schema<IPost>(
   {
@@ -35,5 +35,10 @@ const postSchema = new Schema<IPost>(
     timestamps: true,
   }
 );
+
+postSchema.index({ author: 1 });
+
+postSchema.index({ createdAt: -1 });
+
 
 export const Post= model<IPost>("Post",postSchema);

@@ -19,4 +19,17 @@ router.get("/", PostControllers.getAllPosts);
 
 router.get("/:id", PostControllers.getSinglePost);
 
+router.patch(
+  "/:id",
+  auth("user", "admin"),
+  validateRequest(PostValidation.updatePostValidationSchema),
+  PostControllers.updatePost
+);
+
+router.delete(
+  "/:id",
+  auth("user", "admin"),
+  PostControllers.deletePost
+);
+
 export const PostRoutes = router;
