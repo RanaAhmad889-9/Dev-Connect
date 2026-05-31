@@ -25,7 +25,8 @@ const blockUser = asyncHandler(
   async (req: Request, res: Response) => {
     const result =
       await AdminServices.blockUserIntoDB(
-        req.params.id as string
+        req.params.id as string,
+        req.user!.userId
       );
 
     sendResponse(res, {

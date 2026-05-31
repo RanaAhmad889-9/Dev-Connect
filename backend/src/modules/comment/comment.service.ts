@@ -5,11 +5,16 @@ import { Post } from "../post/post.model";
 
 import { Comment } from "./comment.model";
 
+import { validateObjectId } from "../../utils/validateObjectId";
+
 const createCommentIntoDB = async (
   postId: string,
   userId: string,
   content: string
 ) => {
+  if (!validateObjectId(postId)) {
+  throw new AppError(400, "Invalid post id");
+}
   const post = await Post.findById(postId);
 
   if (!post || post.isDeleted) {
@@ -26,12 +31,18 @@ const createCommentIntoDB = async (
 const getCommentsFromDB = async (
   postId: string
 ) => {
+
+  if (!validateObjectId(postId)) {
+  throw new AppError(400, "Invalid post id");
+}
   return await Comment.find({
     post: postId,
     isDeleted: false,
   })
     .populate("author", "name avatar")
     .sort("-createdAt");
+
+
 };
 
 const updateCommentIntoDB = async (
@@ -40,6 +51,10 @@ const updateCommentIntoDB = async (
   userId: string,
   role: UserRole
 ) => {
+
+if (!validateObjectId(commentId)) {
+  throw new AppError(400, "Invalid comment id");
+}
   const comment =
     await Comment.findById(commentId);
 
@@ -80,6 +95,10 @@ const deleteCommentFromDB = async (
   userId: string,
   role: UserRole
 ) => {
+
+  if (!validateObjectId(commentId)) {
+  throw new AppError(400, "Invalid comment id");
+}
   const comment =
     await Comment.findById(commentId);
 

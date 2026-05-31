@@ -2,6 +2,8 @@ import AppError from "../../utils/AppError";
 import { User } from "../auth/auth.model";
 import { Post } from "../post/post.model";
 
+import { validateObjectId } from "../../utils/validateObjectId";
+
 
 const getUserProfileFromDB = async (
   userId: string
@@ -25,6 +27,10 @@ const updateProfileIntoDB = async (
     bio?: string;
   }
 ) => {
+
+  if (!validateObjectId(userId)) {
+  throw new AppError(400, "Invalid user id");
+}
   const user = await User.findById(userId);
 
   if (!user) {
@@ -47,6 +53,9 @@ const updateProfileIntoDB = async (
 const getMyPostsFromDB = async (
   userId: string
 ) => {
+  if (!validateObjectId(userId)) {
+  throw new AppError(400, "Invalid user id");
+}
   return await Post.find({
     author: userId,
     isDeleted: false,
@@ -57,6 +66,9 @@ const getMyPostsFromDB = async (
 const getUserPostsFromDB = async (
   userId: string
 ) => {
+  if (!validateObjectId(userId)) {
+  throw new AppError(400, "Invalid user id");
+}
   return await Post.find({
     author: userId,
     visibility: "public",

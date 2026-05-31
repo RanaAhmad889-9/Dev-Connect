@@ -4,6 +4,8 @@ import { User } from "../auth/auth.model";
 import { Post } from "../post/post.model";
 import { Comment } from "../comment/comment.model";
 import { Report } from "../report/report.model";
+import { validateObjectId } from "../../utils/validateObjectId";
+
 
 
 const getAllUsersFromDB = async () => {
@@ -14,13 +16,32 @@ const getAllUsersFromDB = async () => {
 
 
 const blockUserIntoDB = async (
-  userId: string
+  userId: string,
+  adminId: string
 ) => {
-  const user = await User.findById(userId);
+if (!validateObjectId(userId)) {
+  throw new AppError(400, "Invalid user id");
 
-  if (!user) {
-    throw new AppError(404, "User not found");
-  }
+}
+
+if (userId === adminId) {
+  throw new AppError(
+    400,
+    "You cannot block yourself"
+  );
+}
+const user = await User.findById(userId);
+
+if (!user) {
+  throw new AppError(404, "User not found");
+}
+
+if (user.isBlocked) {
+  throw new AppError(
+    400,
+    "User already blocked"
+  );
+}
 
   user.isBlocked = true;
 
@@ -33,11 +54,22 @@ const blockUserIntoDB = async (
 const unblockUserIntoDB = async (
   userId: string
 ) => {
+
+  if (!validateObjectId(userId)) {
+  throw new AppError(400, "Invalid user id");
+}
   const user = await User.findById(userId);
 
   if (!user) {
     throw new AppError(404, "User not found");
   }
+
+  if (!user.isBlocked) {
+  throw new AppError(
+    400,
+    "User already active"
+  );
+}
 
   user.isBlocked = false;
 

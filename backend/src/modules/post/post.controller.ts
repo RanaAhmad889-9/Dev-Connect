@@ -20,14 +20,18 @@ const createPost = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAllPosts = asyncHandler(async (_req: Request, res: Response) => {
-  const result = await PostServices.getAllPostsFromDB();
+  const { meta, result } =
+  await PostServices.getAllPostsFromDB(
+    _req.query as Record<string, any>
+  );
 
   sendResponse(res, {
-    success: true,
-    statusCode: 200,
-    message: "Posts retrieved successfully",
-    data: result,
-  });
+  success: true,
+  statusCode: 200,
+  message: "Posts retrieved successfully",
+  meta,
+  data: result,
+});
 });
 
 const getSinglePost = asyncHandler(

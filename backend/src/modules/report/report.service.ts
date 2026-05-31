@@ -5,12 +5,36 @@ import { Post } from "../post/post.model";
 import { ReportStatus } from "./report.interface";
 import { Report } from "./report.model";
 
+import { validateObjectId } from "../../utils/validateObjectId";
+
 const createReportIntoDB = async (
   postId: string,
   userId: string,
   reason: string
 ) => {
+if (!validateObjectId(postId)) {
+  throw new AppError(400, "Invalid post id");
+}
   const post = await Post.findById(postId);
+
+  if (post?.author.toString() === userId) {
+  throw new AppError(
+    400,
+    "You cannot report your own post"
+  );
+}
+
+  const existingReport = await Report.findOne({
+  reporter: userId,
+  post: postId,
+});
+
+if (existingReport) {
+  throw new AppError(
+    409,
+    "You already reported this post"
+  );
+}
 
   if (!post || post.isDeleted) {
     throw new AppError(404, "Post not found");
@@ -34,6 +58,10 @@ const updateReportStatusIntoDB = async (
   reportId: string,
   status: ReportStatus
 ) => {
+
+  if (!validateObjectId(reportId)) {
+  throw new AppError(400, "Invalid report id");
+}
   const report =
     await Report.findById(reportId);
 
@@ -64,6 +92,10 @@ const addAdminMessageIntoDB = async (
   reportId: string,
   adminMessage: string
 ) => {
+
+  if (!validateObjectId(reportId)) {
+  throw new AppError(400, "Invalid report id");
+}
   const report =
     await Report.findById(reportId);
 
@@ -89,16 +121,19 @@ const addCreatorResponseIntoDB = async (
   creatorResponse: string,
   userId: string
 ) => {
-  const report =
-    await Report.findById(reportId)
-      .populate("post");
 
-  if (!report) {
-    throw new AppError(
-      404,
-      "Report not found"
-    );
-  }
+  if (!validateObjectId(reportId)) {
+  throw new AppError(400, "Invalid report id");
+}
+  const report = await Report.findById(reportId).populate("post");
+
+if (!report) {
+  throw new AppError(404, "Report not found");
+}
+
+if (report.status !== "reviewing") {
+  throw new AppError(400, "Report is not under review");
+}
 
   const post: any = report.post;
 

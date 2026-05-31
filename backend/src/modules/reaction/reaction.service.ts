@@ -2,11 +2,16 @@ import AppError from "../../utils/AppError";
 
 import { Post } from "../post/post.model";
 import { Reaction } from "./reaction.model";
+import { validateObjectId } from "../../utils/validateObjectId";
 
 const addReactionIntoDB = async (
   postId: string,
   userId: string
 ) => {
+
+  if (!validateObjectId(postId)) {
+  throw new AppError(400, "Invalid post id");
+}
   const post = await Post.findById(postId);
 
   if (!post || post.isDeleted) {
@@ -36,6 +41,10 @@ const removeReactionFromDB = async (
   postId: string,
   userId: string
 ) => {
+
+  if (!validateObjectId(postId)) {
+  throw new AppError(400, "Invalid post id");
+}
   const reaction =
     await Reaction.findOneAndDelete({
       user: userId,
@@ -55,6 +64,9 @@ const removeReactionFromDB = async (
 const getReactionCountFromDB = async (
   postId: string
 ) => {
+  if (!validateObjectId(postId)) {
+  throw new AppError(400, "Invalid post id");
+}
   const count = await Reaction.countDocuments({
     post: postId,
   });
