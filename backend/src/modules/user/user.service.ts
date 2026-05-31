@@ -8,6 +8,10 @@ import { validateObjectId } from "../../utils/validateObjectId";
 const getUserProfileFromDB = async (
   userId: string
 ) => {
+
+  if (!validateObjectId(userId)) {
+  throw new AppError(400, "Invalid user id");
+}
   const user = await User.findById(userId)
     .select("-password");
 

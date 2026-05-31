@@ -9,6 +9,9 @@ import { TQuery } from "../../interfaces/query.types";
 import QueryBuilder from "../../utils/QueryBuilder";
 
 import { validateObjectId } from "../../utils/validateObjectId";
+import { Comment } from "../comment/comment.model";
+import { Reaction } from "../reaction/reaction.model";
+import { Report } from "../report/report.model";
 
 type TCreatePost = {
   content: string;
@@ -175,6 +178,19 @@ const deletePostFromDB = async (
       new: true,
     }
   );
+
+  await Comment.updateMany(
+  { post: postId },
+  { isDeleted: true }
+);
+
+await Reaction.deleteMany({
+  post: postId,
+});
+
+await Report.deleteMany({
+  post: postId,
+});
 
   return result;
 };

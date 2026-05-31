@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 
 import notFound from "./middlewares/notFound";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
+import helmet from "helmet";
 
 import router from "./routes";
 
@@ -26,6 +27,6 @@ app.use(notFound);
 
 
 app.use(globalErrorHandler);
-
+app.use(helmet());
 
 export default app;
